@@ -65,7 +65,18 @@ function updateExportReferences(
       return;
     }
 
-    if (referencePath.isIdentifier()) {
+    if (
+      referencePath.isJSXIdentifier() ||
+      referencePath.parentPath?.isJSXOpeningElement()
+    ) {
+      dbg(`[${prefix}] transforming type "JSX identifier"`);
+      const jsxElement = template.expression.ast(
+        `<module.exports.${mode == 'default' ? mode : exportedName} />`,
+        { plugins: ['jsx'] }
+      ) as util.JSXElement;
+      const jsxMemberExpression = jsxElement.openingElement.name;
+      referencePath.replaceWith(jsxMemberExpression);
+    } else if (referencePath.isIdentifier()) {
       dbg(`[${prefix}] transforming type "identifier"`);
       referencePath.replaceWith(
         template.expression.ast`module.exports.${mode == 'default' ? mode : exportedName}`

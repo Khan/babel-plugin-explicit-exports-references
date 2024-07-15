@@ -18,6 +18,7 @@ pluginTester({
           targets: 'maintained node versions'
         }
       ],
+      '@babel/preset-react',
       ['@babel/preset-typescript', { allowDeclareFields: true }]
     ]
   }

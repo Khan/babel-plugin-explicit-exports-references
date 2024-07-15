@@ -4,8 +4,7 @@
     "module": "esnext",
     "allowJs": true,
     "checkJs": false,
-    // ? Only for Next.js
-    // "jsx": "preserve",
+    "jsx": "preserve",
     "declaration": true,
     "isolatedModules": true,
     "strict": true,

@@ -1,9 +1,9 @@
-import { name as pkgName } from '../package.json';
 import { NodePath, PluginObj, PluginPass } from '@babel/core';
 import debugFactory from 'debug';
 import * as util from '@babel/types';
 import template from '@babel/template';
 
+const pkgName = 'babel-plugin-explicit-exports-references';
 const debug = debugFactory(`${pkgName}:index`);
 let globalScope: NodePath['scope'];
 

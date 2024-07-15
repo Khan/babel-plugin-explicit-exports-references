@@ -1,9 +1,9 @@
-import { name as pkgName } from '../package.json';
 import { NodePath, PluginObj, PluginPass } from '@babel/core';
 import debugFactory from 'debug';
 import * as util from '@babel/types';
 import template from '@babel/template';
 
+const pkgName = 'babel-plugin-explicit-exports-references';
 const debug = debugFactory(`${pkgName}:index`);
 let globalScope: NodePath['scope'];
 
@@ -65,7 +65,18 @@ function updateExportReferences(
       return;
     }
 
-    if (referencePath.isIdentifier()) {
+    if (
+      referencePath.isJSXIdentifier() ||
+      referencePath.parentPath?.isJSXOpeningElement()
+    ) {
+      dbg(`[${prefix}] transforming type "JSX identifier"`);
+      const jsxElement = template.expression.ast(
+        `<module.exports.${mode == 'default' ? mode : exportedName} />`,
+        { plugins: ['jsx'] }
+      ) as util.JSXElement;
+      const jsxMemberExpression = jsxElement.openingElement.name;
+      referencePath.replaceWith(jsxMemberExpression);
+    } else if (referencePath.isIdentifier()) {
       dbg(`[${prefix}] transforming type "identifier"`);
       referencePath.replaceWith(
         template.expression.ast`module.exports.${mode == 'default' ? mode : exportedName}`
